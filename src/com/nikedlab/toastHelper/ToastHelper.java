@@ -100,14 +100,26 @@ public class ToastHelper {
         mToast.show();
     }
 
+    /**
+     * Setter for X coordinate
+     * @param mXOffset int
+     */
     public void setXOffset(int mXOffset) {
         this.mXOffset = mXOffset;
     }
 
+    /**
+     * Setter for Y coordinate
+     * @param mYOffset int
+     */
     public void setYOffset(int mYOffset) {
         this.mYOffset = mYOffset;
     }
 
+    /**
+     * Setter for gravity parameter
+     * @param mGravity int
+     */
     public void setGravity(int mGravity) {
         this.mGravity = mGravity;
     }

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .code-text {
+            margin-left: 20px;
+            padding: 30px;
+            background: #f5f5dc;
+        }
+        .first-inner {
+            margin-left: 40px;
+        }
+        .second-inner {
+            margin-left: 30px;
+        }
+    </style>
+</head>
+<body>
+<div style="padding: 20px"><p>Time by time we need to create a custom toast messages, its means custom position, custom background, colors and other things.
+With this issue I encounter every day in my projects and I created a special helper for this purposes.</p>
+<br />
+<p>Firstly we need to create custom layout toast.xml in res/layout folder. </p>
+
+    <div class="code-text">
+        &lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"<br />
+        <div class="first-inner">
+            android:id="@+id/toast_layout_root"<br />
+            android:orientation="horizontal"<br />
+            android:layout_width="fill_parent"<br />
+            android:layout_height="fill_parent"<br />
+            android:padding="8dp"<br />
+        </div>
+        &gt;<br />
+        <div class="first-inner">
+            &lt;ImageView android:src="@drawable/bender"<br />
+            <div class="second-inner">
+                android:layout_width="wrap_content"<br />
+                android:layout_height="wrap_content"<br />
+                android:layout_marginRight="8dp"<br />
+            </div>
+            /&gt;<br />
+            &lt;TextView android:id="@+id/text"<br />
+            <div class="second-inner">
+                android:layout_width="wrap_content"<br />
+                android:layout_height="wrap_content"<br />
+                android:textColor="#FFF"<br />
+            </div>
+            /&gt;<br />
+        </div>
+        &lt;/LinearLayout&gt;<br />
+    </div>
+
+<p>Second step it is helper coding. Below my own suggestion how we can do it</p>
+
+<div class="code-text">
+public class ToastHelper {<br />
+<br />
+<div class="first-inner">
+/**<br />
+* Colors<br />
+*/<br />
+public static final int TYPE_ERROR = 0xffff0000; //red<br />
+public static final int TYPE_NOTICE = 0xffffff33; //yellow<br />
+public static final int TYPE_SUCCESS = 0xff66cc33; //green<br />
+<br />
+/**<br />
+* Lengths<br />
+*/<br />
+public static final int LENGTH_LONG = Toast.LENGTH_LONG;<br />
+public static final int LENGTH_SHORT = Toast.LENGTH_SHORT;<br />
+<br />
+/**<br />
+* Coordinates<br />
+*/<br />
+private int mXOffset = 10;<br />
+private int mYOffset = 10;<br />
+<br />
+/**<br />
+* Gravities<br />
+*/<br />
+public static final int GRAVITY_TOP_LEFT   = Gravity.TOP | Gravity.LEFT;<br />
+public static final int GRAVITY_TOP_RIGHT  = Gravity.TOP | Gravity.RIGHT;<br />
+public static final int GRAVITY_TOP_CENTER = Gravity.TOP | Gravity.CENTER;<br />
+<br />
+public static final int GRAVITY_BOTTOM_LEFT   = Gravity.BOTTOM | Gravity.LEFT;<br />
+public static final int GRAVITY_BOTTOM_RIGHT  = Gravity.BOTTOM | Gravity.RIGHT;<br />
+public static final int GRAVITY_BOTTOM_CENTER = Gravity.BOTTOM | Gravity.CENTER;<br />
+<br />
+public static final int GRAVITY_CENTER_LEFT   = Gravity.CENTER | Gravity.LEFT;<br />
+public static final int GRAVITY_CENTER_RIGHT  = Gravity.CENTER | Gravity.RIGHT;<br />
+public static final int GRAVITY_CENTER_CENTER = Gravity.CENTER | Gravity.CENTER;<br />
+<br />
+private int mGravity = GRAVITY_TOP_LEFT;<br />
+<br />
+<br />
+/**<br />
+* Commons<br />
+*/<br />
+private Toast mToast;<br />
+private Activity mActivity;<br />
+private Context mContext;<br />
+<br />
+/**<br />
+* Constructor<br />
+* @param activity Activity<br />
+*/<br />
+public ToastHelper(Activity activity) {<br />
+<div class="second-inner">
+    this.mActivity = activity;<br />
+    mContext = mActivity.getApplicationContext();<br />
+</div>
+}<br />
+<br />
+/**<br />
+* Show simple toast<br />
+* @param message CharSequence<br />
+* @param messageLength int<br />
+*/<br />
+public void showToast(CharSequence message, int messageLength){<br />
+<div class="second-inner">Toast.makeText(mContext, message, messageLength).show();<br /></div>
+}<br />
+<br />
+/**<br />
+*<br />
+* @param message CharSequence<br />
+* @param messageLength int<br />
+* @param messageType int<br />
+*/<br />
+public void showCustomToast(CharSequence message, int messageLength, int messageType) {<br />
+<div class="second-inner">LayoutInflater inflater = mActivity.getLayoutInflater();<br />
+View layout = inflater.inflate(R.layout.toast, (ViewGroup) mActivity.findViewById(R.id.toast_layout_root));<br />
+layout.setBackgroundColor(messageType);<br />
+TextView text = (TextView) layout.findViewById(R.id.text);<br />
+text.setText(message);<br />
+
+mToast = new Toast(mContext);<br />
+mToast.setGravity(mGravity, mXOffset, mYOffset);<br />
+mToast.setDuration(messageLength);<br />
+mToast.setView(layout);<br />
+mToast.show();<br />
+</div>
+}<br />
+<br />
+/**<br />
+* Setter for X coordinate<br />
+* @param mXOffset int<br />
+*/<br />
+public void setXOffset(int mXOffset) {<br />
+<div class="second-inner">this.mXOffset = mXOffset;<br /></div>
+}<br />
+<br />
+/**<br />
+* Setter for Y coordinate<br />
+* @param mYOffset int<br />
+*/<br />
+public void setYOffset(int mYOffset) {<br />
+<div class="second-inner">this.mYOffset = mYOffset;<br /></div>
+}<br />
+<br />
+/**<br />
+* Setter for gravity parameter<br />
+* @param mGravity int<br />
+*/<br />
+public void setGravity(int mGravity) {<br />
+<div class="second-inner">this.mGravity = mGravity;<br /></div>
+}<br />
+</div>
+}<br />
+<br />
+</div>
+
+<p>Next step toast invocation</p>
+
+<div class="code-text">
+    public class MainActivity extends Activity {<br />
+<br />
+        <div class="first-inner">
+        @Override<br />
+        public void onCreate(Bundle savedInstanceState) {<br />
+            <div class="second-inner">super.onCreate(savedInstanceState);<br />
+            setContentView(R.layout.main);<br />
+            <br />
+            ToastHelper mToastHelper = new ToastHelper(MainActivity.this);<br />
+            <br />
+            mToastHelper.showToast("Hello", ToastHelper.LENGTH_SHORT);<br />
+            <br />
+            mToastHelper.setGravity(ToastHelper.GRAVITY_TOP_CENTER);<br />
+            mToastHelper.setXOffset(22);<br />
+            mToastHelper.setYOffset(34);<br />
+            mToastHelper.showCustomToast("Hello", ToastHelper.LENGTH_SHORT, ToastHelper.TYPE_ERROR);<br /></div>
+        }</div><br />
+    }
+</div>
+
+
+<br />
+<br />
+<p><a href="https://github.com/nikedlab/toastHelper" target="_blank">Source code</a></p>
+</div>
+</body>
+</html>
